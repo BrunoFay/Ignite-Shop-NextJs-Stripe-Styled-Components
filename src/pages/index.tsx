@@ -1,4 +1,4 @@
-import type { NextPage } from 'next'
+import type { GetServerSideProps, NextPage } from 'next'
 import Image from 'next/future/image'
 import { HomeContainer, Product } from '../styles/pages/home'
 import shirtOne from '../assets/shirts/1.png'
@@ -8,9 +8,19 @@ import { useKeenSlider } from 'keen-slider/react'
 import { Arrow } from '../components/ArrowCarousel'
 import { useState } from 'react'
 import { NavigationCarousel } from '../styles/components/arrowCarousel'
+import { stripe } from '../lib/stripe'
+import Stripe from 'stripe'
+import ProductComponent from '../components/Product'
 
-
-const Home: NextPage = () => {
+interface HomeProps {
+  products: {
+    id: string
+    name: string
+    imageURL: string
+    price: number
+  }[]
+}
+const Home = ({ products }:HomeProps) => {
   const [sliderRef, instanceRef] = useKeenSlider({
     slides: { perView: 2.5, spacing: 48 },
     initial: 0,
@@ -26,41 +36,9 @@ const Home: NextPage = () => {
   return (
     <NavigationCarousel className='navigation-wrapper'>
       <HomeContainer ref={sliderRef} className='keen-slider'>
-        <Product className='keen-slider__slide'>
-          <Image src={shirtOne} alt='' width={520} height={480} />
-          <footer>
-            <strong>Camiseta Beyond the Limits</strong>
-            <span>R$ 79,90</span>
-          </footer>
-        </Product>
-        <Product className='keen-slider__slide'>
-          <Image src={shirtTwo} alt='' width={520} height={480} />
-          <footer>
-            <strong>Camiseta Beyond the Limits</strong>
-            <span>R$ 79,90</span>
-          </footer>
-        </Product>
-        <Product className='keen-slider__slide'>
-          <Image src={shirtTwo} alt='' width={520} height={480} />
-          <footer>
-            <strong>Camiseta Beyond the Limits</strong>
-            <span>R$ 79,90</span>
-          </footer>
-        </Product>
-        <Product className='keen-slider__slide'>
-          <Image src={shirtTwo} alt='' width={520} height={480} />
-          <footer>
-            <strong>Camiseta Beyond the Limits</strong>
-            <span>R$ 79,90</span>
-          </footer>
-        </Product>
-        <Product className='keen-slider__slide'>
-          <Image src={shirtTwo} alt='' width={520} height={480} />
-          <footer>
-            <strong>Camiseta Beyond the Limits</strong>
-            <span>R$ 79,90</span>
-          </footer>
-        </Product>
+
+        {products.map(product =>(<ProductComponent key={product.id} {...product}/>))}
+
       </HomeContainer>
       {loaded && instanceRef.current && (
         <>
@@ -88,3 +66,26 @@ const Home: NextPage = () => {
 }
 
 export default Home
+
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const apiResponse = await stripe.products.list({
+    /* serve para linkar o preco do produto com o array de produtos */
+    expand: ['data.default_price']
+  })
+  const products = apiResponse.data.map(product => {
+    const price = product.default_price as Stripe.Price
+
+    return {
+      id: product.id,
+      name: product.name,
+      imageURL: product.images[0],
+      price: price.unit_amount
+    }
+  })
+  return {
+    props: {
+      products
+    }
+  }
+}
