@@ -1,16 +1,13 @@
-import type { GetServerSideProps, NextPage } from 'next'
-import Image from 'next/future/image'
-import { HomeContainer, Product } from '../styles/pages/home'
-import shirtOne from '../assets/shirts/1.png'
-import shirtTwo from '../assets/shirts/2.png'
 import 'keen-slider/keen-slider.min.css'
 import { useKeenSlider } from 'keen-slider/react'
-import { Arrow } from '../components/ArrowCarousel'
+import type { GetStaticProps } from 'next'
 import { useState } from 'react'
-import { NavigationCarousel } from '../styles/components/arrowCarousel'
-import { stripe } from '../lib/stripe'
 import Stripe from 'stripe'
+import { Arrow } from '../components/ArrowCarousel'
 import ProductComponent from '../components/Product'
+import { stripe } from '../lib/stripe'
+import { NavigationCarousel } from '../styles/components/arrowCarousel'
+import { HomeContainer } from '../styles/pages/home'
 
 interface HomeProps {
   products: {
@@ -68,7 +65,7 @@ const Home = ({ products }:HomeProps) => {
 export default Home
 
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   const apiResponse = await stripe.products.list({
     /* serve para linkar o preco do produto com o array de produtos */
     expand: ['data.default_price']
@@ -86,6 +83,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   return {
     props: {
       products
-    }
+    },
+    revalidate: 60 * 60 /* a pagina se atualiza a cada 1 hora */
   }
 }
