@@ -4,6 +4,7 @@ import { stripe } from "../../lib/stripe";
 import { ImageContainer, ProductContainer, ProductInfosContainer } from "../../styles/pages/product";
 import Image from 'next/future/image'
 import { useRouter } from "next/router";
+import { log } from "console";
 
 interface ProductProps {
   product: {
@@ -11,13 +12,20 @@ interface ProductProps {
     name: string
     price: number
     imageURL: string
+    defaultPriceId:string
   }
 }
 export default function Product({ product }: ProductProps) {
   const { isFallback } = useRouter()
+
+  function handleBuyProduct(priceId:string){
+    console.log(priceId);
+  }
+
   if (isFallback) {
     return <p>Loading...</p>
   }
+  
   return (
     <ProductContainer>
 
@@ -32,7 +40,7 @@ export default function Product({ product }: ProductProps) {
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat dicta voluptatibus reiciendis pariatur praesentium quis error. Nobis impedit in veniam quod, obcaecati dolore maxime perferendis doloremque recusandae iusto quas esse!
         </p>
 
-        <button>Comprar agora</button>
+        <button onClick={()=>handleBuyProduct(product.defaultPriceId)}>Comprar agora</button>
       </ProductInfosContainer>
     </ProductContainer>
   )
@@ -64,7 +72,8 @@ export const getStaticProps: GetStaticProps<any, { id: string }> = async ({ para
         id: product.id,
         name: product.name,
         imageURL: product.images[0],
-        price: priceFormatted
+        price: priceFormatted,
+        defaultPriceId: price.id
       }
     }
   }
