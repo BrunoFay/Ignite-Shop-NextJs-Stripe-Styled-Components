@@ -1,4 +1,4 @@
-import { GetStaticProps } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import Stripe from "stripe";
 import { stripe } from "../../lib/stripe";
 import { ImageContainer, ProductContainer, ProductInfosContainer } from "../../styles/pages/product";
@@ -31,6 +31,13 @@ export default function Product({ product }: ProductProps) {
       </ProductInfosContainer>
     </ProductContainer>
   )
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [{params:{id:'prod_MYSp9wlnseMim4'}}],
+    fallback: false,
+  }
 }
 
 export const getStaticProps: GetStaticProps<any, { id: string }> = async ({ params }) => {
