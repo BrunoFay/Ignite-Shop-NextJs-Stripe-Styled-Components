@@ -51,18 +51,21 @@ export const ProductInfosContainer = styled('div', {
   },
   button: {
     marginTop: 'auto',
-    background:'$green300',
+    background: '$green300',
     color: 'White',
     fontSize: '$md',
     fontWeight: 'bold',
-    border:0,
-    borderRadius:8,
-    padding:'1.25rem',
+    border: 0,
+    borderRadius: 8,
+    padding: '1.25rem',
     cursor: 'pointer',
-    transition:'all 0.2s',
-
-    '&:hover':{
-      filter:'brightness(0.8)'
+    transition: 'all 0.2s',
+    '&:disabled': {
+      opacity: 0.6,
+      cursor: 'not-allowed',
+    },
+    '&:not(:disabled):hover': {
+      filter: 'brightness(0.8)'
     }
   }
 })

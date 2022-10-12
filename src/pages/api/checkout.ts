@@ -2,7 +2,16 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { stripe } from "../../lib/stripe";
 
 export default async function checkoutStripe(req: NextApiRequest, res: NextApiResponse) {
-  const priceId= '1'
+  const { productId } = req.body
+
+  if(req.method !== 'POST'){
+    return res.status(405)
+  }
+
+  if (!productId) {
+    return res.status(404).json({ message: 'PriceId is required!' })
+  }
+
   const successUrl = `${process.env.APP_MAIN_LINK}/success`
   const cancelUrl = `${process.env.APP_MAIN_LINK}/canceled`
   const checkoutSession = await stripe.checkout.sessions.create({
@@ -10,10 +19,10 @@ export default async function checkoutStripe(req: NextApiRequest, res: NextApiRe
     cancel_url: cancelUrl,
     mode: 'payment',
     line_items: [
-      { price: priceId, quantity: 1 }
+      { price: productId, quantity: 1 }
     ]
   })
   return res.status(201).json({
-    checkoutUrl:checkoutSession.url,
+    checkoutUrl: checkoutSession.url,
   })
 }

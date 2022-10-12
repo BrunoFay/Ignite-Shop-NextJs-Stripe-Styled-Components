@@ -4,7 +4,9 @@ import { stripe } from "../../lib/stripe";
 import { ImageContainer, ProductContainer, ProductInfosContainer } from "../../styles/pages/product";
 import Image from 'next/future/image'
 import { useRouter } from "next/router";
-import { log } from "console";
+import { useState } from "react";
+import axios from 'axios'
+
 
 interface ProductProps {
   product: {
@@ -12,20 +14,41 @@ interface ProductProps {
     name: string
     price: number
     imageURL: string
-    defaultPriceId:string
+    defaultPriceId: string
   }
 }
+
+/* usar o window.location.href caso o redirec seja para uma pagina externa.
+caso seja um redirect para uma pagina interna, usar o hook useRouter e dar um push para a rota.
+ex : const router =useRouter()
+router.push(_rota_)
+*/
+
 export default function Product({ product }: ProductProps) {
   const { isFallback } = useRouter()
+  const [isRedirectToCheckoutPage, setIsRedirectToCheckoutPage] = useState(false)
 
-  function handleBuyProduct(priceId:string){
-    console.log(priceId);
+  async function handleBuyProduct(priceId: string) {
+
+    try {
+      setIsRedirectToCheckoutPage(true)
+
+      const response = await axios.post('/api/checkout', {
+        productId: priceId
+      })
+      const { checkoutUrl } = response.data
+
+      window.location.href = checkoutUrl
+    } catch (error) {
+      setIsRedirectToCheckoutPage(false)
+      alert(error.message)
+    }
   }
 
   if (isFallback) {
     return <p>Loading...</p>
   }
-  
+
   return (
     <ProductContainer>
 
@@ -40,7 +63,11 @@ export default function Product({ product }: ProductProps) {
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat dicta voluptatibus reiciendis pariatur praesentium quis error. Nobis impedit in veniam quod, obcaecati dolore maxime perferendis doloremque recusandae iusto quas esse!
         </p>
 
-        <button onClick={()=>handleBuyProduct(product.defaultPriceId)}>Comprar agora</button>
+        <button
+          disabled={isRedirectToCheckoutPage}
+          onClick={() => handleBuyProduct(product.defaultPriceId)}>
+          Comprar agora
+        </button>
       </ProductInfosContainer>
     </ProductContainer>
   )
