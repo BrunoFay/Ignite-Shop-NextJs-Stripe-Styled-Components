@@ -6,15 +6,15 @@ import { stripe } from "../lib/stripe";
 import { ImageContainer, SuccessContainer } from "../styles/pages/success"
 
 
-interface SuccessProps{
-  product:{
+interface SuccessProps {
+  product: {
     name: string
     imageUrl: string
   }
   costumerName: string
 }
 
-export default function Success({ product, costumerName }:SuccessProps) {
+export default function Success({ product, costumerName }: SuccessProps) {
   return (<>
     <SuccessContainer>
       <h1>Compra efetuada</h1>
@@ -38,6 +38,16 @@ export default function Success({ product, costumerName }:SuccessProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+/* redirect dentro do ssr */
+  if (!query.session_id) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false
+      }
+    }
+  }
+
   const sessionId = String(query.session_id);
 
   const session = await stripe.checkout.sessions.retrieve(sessionId, {
