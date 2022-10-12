@@ -12,7 +12,7 @@ interface ProductProps {
 }
 export default function ProductComponent({ name, price, imageURL, id }: ProductProps) {
   return (
-    <Link href={`/product/${id}`}>
+    <Link href={`/product/${id}`} prefetch={false}>
       <Product className='keen-slider__slide'>
         <Image src={imageURL} alt='' width={520} height={480} />
         <footer>
