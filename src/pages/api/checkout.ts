@@ -12,7 +12,7 @@ export default async function checkoutStripe(req: NextApiRequest, res: NextApiRe
     return res.status(404).json({ message: 'PriceId is required!' })
   }
 
-  const successUrl = `${process.env.APP_MAIN_LINK}/success`
+  const successUrl = `${process.env.APP_MAIN_LINK}/success?session_id={CHECKOUT_SESSION_ID}`
   const cancelUrl = `${process.env.APP_MAIN_LINK}/canceled`
   const checkoutSession = await stripe.checkout.sessions.create({
     success_url: successUrl,
