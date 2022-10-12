@@ -6,6 +6,7 @@ import Image from 'next/future/image'
 import { useRouter } from "next/router";
 import { useState } from "react";
 import axios from 'axios'
+import Head from "next/head";
 
 
 interface ProductProps {
@@ -50,26 +51,31 @@ export default function Product({ product }: ProductProps) {
   }
 
   return (
-    <ProductContainer>
+    <>
+      <Head>
+        <title>{product.name} | Ignite Shop</title>
+      </Head>
+      <ProductContainer>
 
-      <ImageContainer>
-        <Image src={product.imageURL} alt='' width={520} height={480} />
-      </ImageContainer>
+        <ImageContainer>
+          <Image src={product.imageURL} alt='' width={520} height={480} />
+        </ImageContainer>
 
-      <ProductInfosContainer>
-        <h1>{product.name}</h1>
-        <span>{product.price}</span>
+        <ProductInfosContainer>
+          <h1>{product.name}</h1>
+          <span>{product.price}</span>
 
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat dicta voluptatibus reiciendis pariatur praesentium quis error. Nobis impedit in veniam quod, obcaecati dolore maxime perferendis doloremque recusandae iusto quas esse!
-        </p>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat dicta voluptatibus reiciendis pariatur praesentium quis error. Nobis impedit in veniam quod, obcaecati dolore maxime perferendis doloremque recusandae iusto quas esse!
+          </p>
 
-        <button
-          disabled={isRedirectToCheckoutPage}
-          onClick={() => handleBuyProduct(product.defaultPriceId)}>
-          Comprar agora
-        </button>
-      </ProductInfosContainer>
-    </ProductContainer>
+          <button
+            disabled={isRedirectToCheckoutPage}
+            onClick={() => handleBuyProduct(product.defaultPriceId)}>
+            Comprar agora
+          </button>
+        </ProductInfosContainer>
+      </ProductContainer>
+    </>
   )
 }
 

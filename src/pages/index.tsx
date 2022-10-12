@@ -1,6 +1,7 @@
 import 'keen-slider/keen-slider.min.css'
 import { useKeenSlider } from 'keen-slider/react'
 import type { GetStaticProps } from 'next'
+import Head from 'next/head'
 import { useState } from 'react'
 import Stripe from 'stripe'
 import { Arrow } from '../components/ArrowCarousel'
@@ -31,34 +32,39 @@ const Home = ({ products }:HomeProps) => {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [loaded, setLoaded] = useState(false)
   return (
-    <NavigationCarousel className='navigation-wrapper'>
-      <HomeContainer ref={sliderRef} className='keen-slider'>
+    <>
+    <Head>
+      <title>Ignite Shop</title>
+    </Head>
+      <NavigationCarousel className='navigation-wrapper'>
+        <HomeContainer ref={sliderRef} className='keen-slider'>
 
-        {products.map(product =>(<ProductComponent key={product.id} {...product}/>))}
+          {products.map(product =>(<ProductComponent key={product.id} {...product}/>))}
 
-      </HomeContainer>
-      {loaded && instanceRef.current && (
-        <>
-          <Arrow
-            left
-            onClick={(e: any) =>
-              e.stopPropagation() || instanceRef.current?.prev()
-            }
-            disabled={currentSlide === 0}
-          />
+        </HomeContainer>
+        {loaded && instanceRef.current && (
+          <>
+            <Arrow
+              left
+              onClick={(e: any) =>
+                e.stopPropagation() || instanceRef.current?.prev()
+              }
+              disabled={currentSlide === 0}
+            />
 
-          <Arrow
-            onClick={(e: any) =>
-              e.stopPropagation() || instanceRef.current?.next()
-            }
-            disabled={
-              currentSlide ===
-              instanceRef.current.track.details.slides.length - 1
-            }
-          />
-        </>
-      )}
-    </NavigationCarousel>
+            <Arrow
+              onClick={(e: any) =>
+                e.stopPropagation() || instanceRef.current?.next()
+              }
+              disabled={
+                currentSlide ===
+                instanceRef.current.track.details.slides.length - 1
+              }
+            />
+          </>
+        )}
+      </NavigationCarousel>
+    </>
   )
 }
 
