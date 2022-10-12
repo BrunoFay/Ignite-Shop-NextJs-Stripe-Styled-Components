@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { stripe } from "../../lib/stripe";
 import { ImageContainer, ProductContainer, ProductInfosContainer } from "../../styles/pages/product";
 import Image from 'next/future/image'
+import { useRouter } from "next/router";
 
 interface ProductProps {
   product: {
@@ -13,6 +14,10 @@ interface ProductProps {
   }
 }
 export default function Product({ product }: ProductProps) {
+  const { isFallback } = useRouter()
+  if (isFallback) {
+    return <p>Loading...</p>
+  }
   return (
     <ProductContainer>
 
@@ -34,9 +39,11 @@ export default function Product({ product }: ProductProps) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  /*fallback: 'blocking', faz com que a pagina nao exiba nada até ter a reposta da api para renderizar as informações*/
   return {
-    paths: [{params:{id:'prod_MYSp9wlnseMim4'}}],
-    fallback: false,
+    /* colocar nos paths itens mais buscados ou os mais vendidos dentro de paths/params */
+    paths: [{ params: { id: 'prod_MYSp9wlnseMim4' } }],
+    fallback: true,
   }
 }
 
